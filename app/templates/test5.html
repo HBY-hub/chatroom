@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title><!--  导入jquery的js外部文件   -->
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script>
+        $(function () {
+            //定义全局变量，这里只有一个label，所有用标签选择器
+            var lab = $("label");
+            lab.css("color", "red");
+            lab.css("font-size", "12px");
+            var btn = document.getElementById("btn");
+
+            //点击任何一个input标签的button都将执行，本测试只有一个
+                btn.onclick=function(){
+
+                    //获取指定id的第一个元素内容
+                    alert("1");
+                    var name = $("#userName").val();
+                    var jsonObj = {"name": "hby","pwd":"hby"};
+                    //执行ajax
+                    $.ajax({
+                        //传输类型，这里使用Post
+                        type: "Post",
+                        //传输地址，这里是间接路径，测试路径在同目录下
+                        // url: "http://118.126.104.223/admin/user_login",
+                        url: "/admin/user_login",
+                        //传输数据,也可以通过问号传值, 比如  url："search?name="+name
+                        data: jsonObj,
+                        //成功执行时
+                        success: function (mess) {
+                            //消息反馈为 "yes"
+                            console.log(mess);
+                        }
+                    })
+                }
+
+
+        })
+    </script>
+
+</head>
+<body>
+
+<button  type="button" id="btn" value="验证用户名"/>
+
+</body>
+</html>

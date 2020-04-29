@@ -324,6 +324,7 @@ def get_room():
 #             "status": RET.OK,
 #             "message": error_map[RET.OK],
 #             "room": room.tojson()
+
 #         })
 
 

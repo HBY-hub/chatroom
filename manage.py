@@ -69,7 +69,7 @@ def disconnection(data):
 @app.route('/')
 def hello_world():
     # data = json.loads(request.get_data(as_text=True))
-    return render_template("test4.html")
+    return ''
 
 
 if __name__ == '__main__':

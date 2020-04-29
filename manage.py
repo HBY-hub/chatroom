@@ -5,7 +5,7 @@ from flask import render_template, Flask, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 
-from app.models import History
+from app.models import History, User
 
 socketio = SocketIO(app, cors_allowed_origins='*')
 people = []
@@ -20,6 +20,7 @@ def new_message(data):
     username = data["username"]
     userid = data["userid"]
     roomid = data['roomid']
+    user = User.query.filter_by(id =userid).first_or_404()
     history = History(
         content=content,
         chatroom=roomid,
@@ -29,6 +30,7 @@ def new_message(data):
     db.session.commit()
     emit("response",
          {
+             "face":user.face,
              "content": content,
              "roomid": roomid,
              "sender": username,

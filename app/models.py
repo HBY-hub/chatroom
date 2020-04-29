@@ -20,6 +20,14 @@ class User(db.Model):
     extend_existing = True
 
     def tojson(self):
+        # print(self.info)
+        # temp = self.info[1:-1].split(',')
+        # print(temp)
+        # mp = {}
+        # for it in temp:
+        #     fir = it.split(':')[0]
+        #     sec = it.split(':')[1]
+        #     mp[fir[1:-1]] = sec[1:-1]
         return {
             "id": self.id,
             "name": self.name,

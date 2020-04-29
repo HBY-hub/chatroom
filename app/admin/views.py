@@ -121,6 +121,7 @@ def add_room():
         })
     creator = data["creator"]
     name = data["roomname"]
+    info = data["info"]
     try:
         droom = Chatroom.query.filter_by(name=name).first_or_404()
         if droom != None:
@@ -133,13 +134,13 @@ def add_room():
             creator=creator,
             name=name,
             face=default_face,
-            info='',
+            info=info,
             uuid=""
         )
         db.session.add(room)
         db.session.commit()
         room = Chatroom.query.filter_by(name=name).first_or_404()
-        room.uuid = "http://127.0.0.1:5000/room/" + str(room.id)
+        room.uuid = "http://118.126.104.223:8080/room/" + str(room.id)
         db.session.add(room)
         db.session.commit()
         print(room.uuid)
@@ -152,13 +153,13 @@ def add_room():
         creator=creator,
         name=name,
         face=default_face,
-        info='',
+        info=info,
         uuid=""
     )
     db.session.add(room)
     db.session.commit()
     room = Chatroom.query.filter_by(name=name).first_or_404()
-    room.uuid = "http://127.0.0.1:5000/room/" + str(room.id)
+    room.uuid = "http://118.126.104.223:8080/room/" + str(room.id)
     db.session.add(room)
     db.session.commit()
     return jsonify({
@@ -223,6 +224,7 @@ def get_user():
     except:
         return jsonify({"status": RET.USERERR, "message": error_map[RET.USERERR]})
     else:
+        print(user.tojson())
         return jsonify({
             "status": RET.OK,
             "message": error_map[RET.OK],
@@ -259,7 +261,10 @@ def edit_user():
 @admin.route("/room_get", methods=["GET"])
 def get_room():
     # data = slp(request.get_data(as_text=True))
-    data = json.loads(request.get_data(as_text=True))
+    # data = json.loads(request.get_data(as_text=True))
+    data = {}
+    data["id"] = request.args["roomid"]
+    data["token"] = request.args["token"]
     token = data['token']
     if check_t(token):
         return jsonify({
@@ -329,6 +334,7 @@ def room_del():
     room_id = data["room_id"]
     room = Chatroom.query.filter_by(id=room_id).first_or_404()
     db.session.delete(room)
+    db.session.commit()
     return jsonify({
         "status": RET.OK,
         "status": RET.OK,
@@ -422,33 +428,50 @@ def upload_user():
 @admin.route('/history', methods=["GET"])
 def history():
     # data = slp(request.get_data(as_text=True))
-    data = json.loads(request.get_data(as_text=True))
+    # data = json.loads(request.get_data(as_text=True))
+    data = {}
+    data["token"] = request.args["token"]
+    data["page"] = request.args["page"]
+    data["room_id"] = request.args["room_id"]
+    print(data)
     token = data["token"]
     if check_t(token):
+        print("-")
         return jsonify({
             "status": RET.TOKENERR,
             "message": error_map[RET.TOKENERR]
         })
-    page = data["page"]
-    room_id = data["room_id"]
+    print("--")
+    page = eval(data["page"])
+    room_id = eval(data["room_id"])
     hist = History.query.filter_by(chatroom=room_id).order_by(
         History.addtime.desc()
     ).all()
+    print("---")
+    print(page)
+    print(room_id)
     perpage = 25
     beg = (page - 1) * perpage
     lis = []
     if len(hist) < beg:
         lis = []
     elif len(hist) < beg + perpage:
+        print("k")
         for i in range(beg, len(hist)):
             print(hist[i].tojson())
             lis.append(hist[i].tojson())
     else:
+        print("kk")
+        print(beg)
+        print(hist)
         for i in range(beg, beg + perpage):
+            print(i)
+            u = hist[i].tojson()
             print(hist[i].tojson())
             lis.append(hist[i].tojson())
     # for it in hist:
     #     lis.append(it.tojson())
+    print("-----")
     if len(lis) == 0:
         return jsonify({
             "status": RET.NODATA,
